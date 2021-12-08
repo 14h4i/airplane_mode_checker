@@ -2,7 +2,7 @@
 
 ------
 
-<!-- [![Pub](https://img.shields.io/pub/v/airplane_mode_checker.svg)](https://pub.dev/packages/airplane_mode_checker) -->
+[![Pub](https://img.shields.io/pub/v/airplane_mode_checker.svg)](https://pub.dev/packages/airplane_mode_checker)
 
 A Flutter plugin allows you to check the status of Airplane Mode on iOS and Android mobile.
 
