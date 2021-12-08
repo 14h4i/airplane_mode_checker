@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+enum AirplaneModeStatus { on, off }
+
 class AirplaneModeChecker {
   static const MethodChannel _channel = MethodChannel('airplane_mode_checker');
 
@@ -10,9 +12,15 @@ class AirplaneModeChecker {
     return version;
   }
 
-  static Future<String> checkAirplaneMode() async {
+  static Future<AirplaneModeStatus> checkAirplaneMode() async {
+    late AirplaneModeStatus airplaneModeStatus;
     final String airplanemode =
         await _channel.invokeMethod('checkAirplaneMode');
-    return airplanemode;
+    if (airplanemode == 'ON') {
+      airplaneModeStatus = AirplaneModeStatus.on;
+    } else if (airplanemode == 'OFF') {
+      airplaneModeStatus = AirplaneModeStatus.off;
+    }
+    return airplaneModeStatus;
   }
 }
