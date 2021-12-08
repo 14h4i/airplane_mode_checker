@@ -1,3 +1,8 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+- Flutter plugin for check airplane mode
+
+## 1.0.0
+
+- Publishing plugin
+
