@@ -1,7 +1,6 @@
 name: airplane_mode_checker
 description: Flutter plugin allows you to check the status of Airplane Mode on iOS and Android mobile.
 version: 1.0.0
-author: 14h4i<pgkhai.dev@gmail.com>
 homepage: https://github.com/14h4i/airplane_mode_checker
 
 environment:
