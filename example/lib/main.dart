@@ -23,6 +23,7 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
   }
 
+  //Setup LongToast
   void showLongToast(String state) {
     Fluttertoast.showToast(
       msg: state,
@@ -53,21 +54,29 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-            body: Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: ElevatedButton(
+      home: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Version $_platformVersion'),
+              ElevatedButton(
                 child: const Text('Check AirplaneMode'),
                 onPressed: () async {
-                  String state = await AirplaneModeChecker.checkAirplaneMode();
-                  showLongToast(state);
-                  print(state);
-                }),
-          )
-        ]))));
+                  final status = await AirplaneModeChecker.checkAirplaneMode();
+                  if (status == AirplaneModeStatus.on) {
+                    showLongToast('ON');
+                    print('ON');
+                  } else {
+                    showLongToast('OFF');
+                    print('OFF');
+                  }
+                },
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
