@@ -1,15 +1,66 @@
-# airplane_mode_checker
+# AirplaneModeChecker
 
-A new flutter plugin project.
+------
 
-## Getting Started
+<!-- [![Pub](https://img.shields.io/pub/v/airplane_mode_checker.svg)](https://pub.dev/packages/airplane_mode_checker) -->
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+A Flutter plugin allows you to check the status of Airplane Mode on iOS and Android mobile.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Usage 
+Find the example wiring in the [example app](https://github.com/14h4i/airplane_mode_checker/blob/master/example/lib/main.dart)
+### Installation
 
+Add the following line to `pubspec.yaml`:
+
+```yaml
+dependencies:
+  airplane_mode_checker: ^1.0.0
+```
+
+Add the following import to your Dart code:
+
+```dart
+import 'package:airplane_mode_checker/airplane_mode_checker.dart';
+```
+
+
+### Check Airplane Mode
+
+In order to check the airplane mode, use ```AirplaneModeChecker.checkAirplaneMode()``` as below.  
+
+You will get the return `AirplaneModeStatus`:
+- `AirplaneModeStatus.on`
+- `AirplaneModeStatus.off`
+
+
+```dart
+final status = await AirplaneModeChecker.checkAirplaneMode();
+```
+
+
+## iOS available
+
+iOS is available from version 12
+
+```swift
+@available(iOS 12.0, *)
+```
+
+
+## ScreenShots
+
+> ### Android
+| <img src="https://raw.githubusercontent.com/14h4i/airplane_mode_checker/master/screenshots/on.jpg" width="360" /> | <img src="https://raw.githubusercontent.com/14h4i/airplane_mode_checker/master/screenshots/off.jpg" width="360" /> |
+| :------------: | :------------: |
+| AirplaneMode: `ON` | AirplaneMode: `OFF` |
+
+
+
+## Issues and feedback
+
+Please file [issues](https://github.com/14h4i/airplane_mode_checker/issues) to send feedback or report a bug. Thank you!
+
+
+## License
+
+[MIT](https://mit-license.org) License
