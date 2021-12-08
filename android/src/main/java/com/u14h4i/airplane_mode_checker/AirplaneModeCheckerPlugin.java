@@ -9,28 +9,23 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** AirplaneModeCheckerPlugin */
 public class AirplaneModeCheckerPlugin implements FlutterPlugin, MethodCallHandler {
   private MethodChannel channel;
 
-  /** Plugin registration. */
-  private Registrar mRegistrar;
+  private FlutterPluginBinding mFlutterPluginBinding;
 
-  private AirplaneModeCheckerPlugin(Registrar registrar) {
-    this.mRegistrar = registrar;
-  }
+  public AirplaneModeCheckerPlugin() {
 
-  public static void registerWith(Registrar registrar) {
-    final MethodChannel channel = new MethodChannel(registrar.messenger(), "airplane_mode_checker");
-    channel.setMethodCallHandler(new AirplaneModeCheckerPlugin(registrar));
   }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "airplane_mode_checker");
     channel.setMethodCallHandler(this);
+    mFlutterPluginBinding = flutterPluginBinding;
+
   }
 
   @Override
@@ -50,10 +45,10 @@ public class AirplaneModeCheckerPlugin implements FlutterPlugin, MethodCallHandl
   private Boolean isAirModeOn() {
     Boolean isAirplaneMode;
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      isAirplaneMode = Settings.System.getInt(mRegistrar.context().getContentResolver(),
+      isAirplaneMode = Settings.System.getInt(mFlutterPluginBinding.getApplicationContext().getContentResolver(),
           Settings.System.AIRPLANE_MODE_ON, 0) == 1;
     } else {
-      isAirplaneMode = Settings.Global.getInt(mRegistrar.context().getContentResolver(),
+      isAirplaneMode = Settings.Global.getInt(mFlutterPluginBinding.getApplicationContext().getContentResolver(),
           Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
     }
     return isAirplaneMode;
