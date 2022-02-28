@@ -13,7 +13,7 @@ class AirplaneModeChecker {
   }
 
   static Future<AirplaneModeStatus> checkAirplaneMode() async {
-    late AirplaneModeStatus airplaneModeStatus;
+    AirplaneModeStatus airplaneModeStatus = AirplaneModeStatus.off;
     final String airplanemode =
         await _channel.invokeMethod('checkAirplaneMode');
     if (airplanemode == 'ON') {
