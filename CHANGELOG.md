@@ -6,3 +6,6 @@
 
 - Publishing plugin
 
+## 1.0.1
+
+- Update SwiftAirplaneModeCheckerPlugin.swift
