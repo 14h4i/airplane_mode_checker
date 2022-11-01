@@ -64,3 +64,6 @@ Please file [issues](https://github.com/14h4i/airplane_mode_checker/issues) to s
 ## License
 
 [MIT](https://mit-license.org) License
+
+<a href="https://www.buymeacoffee.com/14h4i" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
