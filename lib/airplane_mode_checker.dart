@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 enum AirplaneModeStatus { on, off }
 
 class AirplaneModeChecker {
+  AirplaneModeChecker._();
   static const MethodChannel _channel = MethodChannel('airplane_mode_checker');
 
   static Future<String?> get platformVersion async {
