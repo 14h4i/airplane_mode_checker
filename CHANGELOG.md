@@ -17,3 +17,7 @@
 ## 1.0.3
 
 - Update readme
+
+## 1.0.4
+
+- Turn private AirplaneModeChecker constructor (PR https://github.com/14h4i/airplane_mode_checker/pull/6)

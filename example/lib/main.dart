@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -66,10 +68,10 @@ class _MyAppState extends State<MyApp> {
                   final status = await AirplaneModeChecker.checkAirplaneMode();
                   if (status == AirplaneModeStatus.on) {
                     showLongToast('ON');
-                    print('ON');
+                    log('ON');
                   } else {
                     showLongToast('OFF');
-                    print('OFF');
+                    log('OFF');
                   }
                 },
               )
