@@ -6,6 +6,7 @@ enum AirplaneModeStatus { on, off }
 
 class AirplaneModeChecker {
   AirplaneModeChecker._();
+
   static const MethodChannel _channel = MethodChannel('airplane_mode_checker');
 
   static Future<String?> get platformVersion async {
@@ -15,8 +16,7 @@ class AirplaneModeChecker {
 
   static Future<AirplaneModeStatus> checkAirplaneMode() async {
     AirplaneModeStatus airplaneModeStatus = AirplaneModeStatus.off;
-    final String airplanemode =
-        await _channel.invokeMethod('checkAirplaneMode');
+    final airplanemode = await _channel.invokeMethod('checkAirplaneMode');
     if (airplanemode == 'ON') {
       airplaneModeStatus = AirplaneModeStatus.on;
     } else if (airplanemode == 'OFF') {
