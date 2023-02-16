@@ -21,3 +21,8 @@
 ## 1.0.4
 
 - Turn private AirplaneModeChecker constructor (PR https://github.com/14h4i/airplane_mode_checker/pull/6)
+
+## 1.0.5
+
+- Remove print on iOS and clean up native code (PR https://github.com/14h4i/airplane_mode_checker/pull/8)
+  Thanks @stefanschaller
