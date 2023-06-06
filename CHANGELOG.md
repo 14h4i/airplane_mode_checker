@@ -26,3 +26,12 @@
 
 - Remove print on iOS and clean up native code (PR https://github.com/14h4i/airplane_mode_checker/pull/8)
   Thanks @stefanschaller
+
+## 2.0.0
+
+- Updates:
+* Android Gradle plugin (AGP)
+* Gradle wrapper
+* Kotlin version
+* compileSdkVersion
+* Update dependencies
