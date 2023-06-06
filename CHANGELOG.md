@@ -29,7 +29,7 @@
 
 ## 2.0.0
 
-- Updates:
+**Updates:**
 * Android Gradle plugin (AGP)
 * Gradle wrapper
 * Kotlin version
