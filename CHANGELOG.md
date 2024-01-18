@@ -35,3 +35,9 @@
 * Kotlin version
 * compileSdkVersion
 * Update dependencies
+
+## 2.1.0
+
+**Updates:**
+* Logic check airplane for IOS
+* Issue (https://github.com/14h4i/airplane_mode_checker/issues/11)
