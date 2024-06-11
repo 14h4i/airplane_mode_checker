@@ -41,3 +41,8 @@
 **Updates:**
 * Logic check airplane for IOS
 * Issue (https://github.com/14h4i/airplane_mode_checker/issues/11)
+
+## 2.2.0
+
+**Updates:**
+* Moved dependency 'fluttertoast' to example folder (https://github.com/14h4i/airplane_mode_checker/pull/14)
