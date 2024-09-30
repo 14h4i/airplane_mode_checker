@@ -1,27 +1,24 @@
-import 'dart:async';
-
-import 'package:flutter/services.dart';
+import 'airplane_mode_checker_platform_interface.dart';
 
 enum AirplaneModeStatus { on, off }
 
 class AirplaneModeChecker {
   AirplaneModeChecker._();
+  static final AirplaneModeChecker _instance = AirplaneModeChecker._();
 
-  static const MethodChannel _channel = MethodChannel('airplane_mode_checker');
+  static AirplaneModeChecker get instance => _instance;
 
-  static Future<String?> get platformVersion async {
-    final String? version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
+  Future<String?> getPlatformVersion() {
+    return AirplaneModeCheckerPlatform.instance.getPlatformVersion();
   }
 
-  static Future<AirplaneModeStatus> checkAirplaneMode() async {
-    AirplaneModeStatus airplaneModeStatus = AirplaneModeStatus.off;
-    final airplanemode = await _channel.invokeMethod('checkAirplaneMode');
-    if (airplanemode == 'ON') {
-      airplaneModeStatus = AirplaneModeStatus.on;
-    } else if (airplanemode == 'OFF') {
-      airplaneModeStatus = AirplaneModeStatus.off;
+  Future<AirplaneModeStatus> checkAirplaneMode() async {
+    final mode = await AirplaneModeCheckerPlatform.instance.checkAirplaneMode();
+
+    if (mode == 'ON') {
+      return AirplaneModeStatus.on;
     }
-    return airplaneModeStatus;
+
+    return AirplaneModeStatus.off;
   }
 }

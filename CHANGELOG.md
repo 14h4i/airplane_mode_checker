@@ -30,19 +30,29 @@
 ## 2.0.0
 
 **Updates:**
-* Android Gradle plugin (AGP)
-* Gradle wrapper
-* Kotlin version
-* compileSdkVersion
-* Update dependencies
+
+- Android Gradle plugin (AGP)
+- Gradle wrapper
+- Kotlin version
+- compileSdkVersion
+- Update dependencies
 
 ## 2.1.0
 
 **Updates:**
-* Logic check airplane for IOS
-* Issue (https://github.com/14h4i/airplane_mode_checker/issues/11)
+
+- Logic check airplane for IOS
+- Issue (https://github.com/14h4i/airplane_mode_checker/issues/11)
 
 ## 2.2.0
 
 **Updates:**
-* Moved dependency 'fluttertoast' to example folder (https://github.com/14h4i/airplane_mode_checker/pull/14)
+
+- Moved dependency 'fluttertoast' to example folder (https://github.com/14h4i/airplane_mode_checker/pull/14)
+
+## 3.0.0
+
+**Updates:**
+
+- Migrate to new base
+- Add `namespace` - Support for AGP Version (https://github.com/14h4i/airplane_mode_checker/issues/15)
