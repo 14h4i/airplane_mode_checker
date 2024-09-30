@@ -19,13 +19,13 @@ class AirplaneModeCheckerPlugin: FlutterPlugin, MethodCallHandler {
 
   private lateinit var mFlutterPluginBinding: FlutterPlugin.FlutterPluginBinding
 
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "airplane_mode_checker")
     channel.setMethodCallHandler(this)
     mFlutterPluginBinding = flutterPluginBinding
   }
 
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+  override fun onMethodCall(call: MethodCall, result: Result) {
     if (call.method == "getPlatformVersion") {
       result.success("Android ${android.os.Build.VERSION.RELEASE}")
     } else if (call.method.equals("checkAirplaneMode")) {
@@ -38,15 +38,15 @@ class AirplaneModeCheckerPlugin: FlutterPlugin, MethodCallHandler {
   private fun isAirModeOn(): Boolean? {
     val isAirplaneMode: Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
       Settings.Global.getInt(mFlutterPluginBinding.getApplicationContext().getContentResolver(),
-              Settings.Global.AIRPLANE_MODE_ON, 0) == 1
+        Settings.Global.AIRPLANE_MODE_ON, 0) == 1
     } else {
       Settings.System.getInt(mFlutterPluginBinding.getApplicationContext().getContentResolver(),
-              Settings.System.AIRPLANE_MODE_ON, 0) == 1
+        Settings.System.AIRPLANE_MODE_ON, 0) == 1
     }
     return isAirplaneMode
   }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
   }
 }

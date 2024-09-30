@@ -16,7 +16,7 @@ Add the following line to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  airplane_mode_checker: ^2.2.0
+  airplane_mode_checker: ^3.0.0
 ```
 
 Add the following import to your Dart code:

@@ -1,19 +1,18 @@
+import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:airplane_mode_checker/airplane_mode_checker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -38,7 +37,8 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = (await AirplaneModeChecker.platformVersion)!;
+      platformVersion =
+          (await AirplaneModeChecker.instance.getPlatformVersion())!;
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -65,7 +65,8 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 child: const Text('Check AirplaneMode'),
                 onPressed: () async {
-                  final status = await AirplaneModeChecker.checkAirplaneMode();
+                  final status =
+                      await AirplaneModeChecker.instance.checkAirplaneMode();
                   if (status == AirplaneModeStatus.on) {
                     showLongToast('ON');
                     log('ON');
