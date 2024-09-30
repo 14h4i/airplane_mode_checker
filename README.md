@@ -1,4 +1,4 @@
-# AirplaneModeChecker
+# airplane_mode_checker
 
 ---
 
