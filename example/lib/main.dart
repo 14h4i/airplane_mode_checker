@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:airplane_mode_checker/airplane_mode_checker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(const MyApp());
@@ -16,15 +15,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  late Stream<AirplaneModeStatus> _stream;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    _stream = AirplaneModeChecker.instance.listenAirplaneMode();
   }
 
-  //Setup LongToast
+  // Setup LongToast
   void showLongToast(String state) {
     Fluttertoast.showToast(
       msg: state,
@@ -32,54 +31,73 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion =
-          (await AirplaneModeChecker.instance.getPlatformVersion())!;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Version $_platformVersion'),
+              // Get Airplane Mode Status
               ElevatedButton(
-                child: const Text('Check AirplaneMode'),
+                child: const Text('Check Airplane Mode'),
                 onPressed: () async {
                   final status =
                       await AirplaneModeChecker.instance.checkAirplaneMode();
-                  if (status == AirplaneModeStatus.on) {
-                    showLongToast('ON');
-                    log('ON');
+
+                  final state = _stringFromAirplaneModeStatus(status);
+                  log(state);
+                  showLongToast(state);
+                },
+              ),
+              const SizedBox(height: 20),
+              // Listen to Airplane Mode Status
+              const Text(
+                'Stream',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              StreamBuilder<AirplaneModeStatus>(
+                stream: _stream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (!snapshot.hasData) {
+                    return const Text('No data');
                   } else {
-                    showLongToast('OFF');
-                    log('OFF');
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Airplane Mode: '),
+                        Text(
+                          _stringFromAirplaneModeStatus(snapshot.data),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    );
                   }
                 },
-              )
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  String _stringFromAirplaneModeStatus(AirplaneModeStatus? status) {
+    switch (status) {
+      case AirplaneModeStatus.on:
+        return 'ON';
+      case AirplaneModeStatus.off:
+        return 'OFF';
+      default:
+        return 'OFF';
+    }
   }
 }

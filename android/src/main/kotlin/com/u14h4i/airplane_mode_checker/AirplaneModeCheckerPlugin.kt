@@ -1,52 +1,82 @@
 package com.u14h4i.airplane_mode_checker
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
 /** AirplaneModeCheckerPlugin */
-class AirplaneModeCheckerPlugin: FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel
+class AirplaneModeCheckerPlugin: FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
+  private lateinit var methodChannel: MethodChannel
+  private lateinit var eventChannel: EventChannel
+  private lateinit var context: Context
+  private var eventSink: EventChannel.EventSink? = null
 
-  private lateinit var mFlutterPluginBinding: FlutterPlugin.FlutterPluginBinding
+  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    methodChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "airplane_mode_checker")
+    methodChannel.setMethodCallHandler(this)
+    eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "airplane_mode_checker_stream")
+    eventChannel.setStreamHandler(this)
+    context = flutterPluginBinding.applicationContext
 
-  override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "airplane_mode_checker")
-    channel.setMethodCallHandler(this)
-    mFlutterPluginBinding = flutterPluginBinding
+    // Check initial airplane mode status
+    checkInitialAirplaneMode()
   }
 
-  override fun onMethodCall(call: MethodCall, result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else if (call.method.equals("checkAirplaneMode")) {
-      if (isAirModeOn()!!) result.success("ON") else result.success("OFF")
-    } else {
-      result.notImplemented()
+  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    when (call.method) {
+      "getPlatformVersion" -> result.success("Android ${Build.VERSION.RELEASE}")
+      "checkAirplaneMode" -> {
+        if (isAirModeOn()) result.success("ON") else result.success("OFF")
+      }
+      else -> result.notImplemented()
     }
   }
 
-  private fun isAirModeOn(): Boolean? {
-    val isAirplaneMode: Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      Settings.Global.getInt(mFlutterPluginBinding.getApplicationContext().getContentResolver(),
-        Settings.Global.AIRPLANE_MODE_ON, 0) == 1
+  private fun isAirModeOn(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      Settings.Global.getInt(context.contentResolver, Settings.Global.AIRPLANE_MODE_ON, 0) == 1
     } else {
-      Settings.System.getInt(mFlutterPluginBinding.getApplicationContext().getContentResolver(),
-        Settings.System.AIRPLANE_MODE_ON, 0) == 1
+      Settings.System.getInt(context.contentResolver, Settings.System.AIRPLANE_MODE_ON, 0) == 1
     }
-    return isAirplaneMode
   }
 
-  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
+  private fun checkInitialAirplaneMode() {
+      val isAirplaneModeOn = isAirModeOn()
+      eventSink?.success(if (isAirplaneModeOn) "ON" else "OFF")
+    }
+
+  override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+    eventSink = events
+    val filter = IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+    context.registerReceiver(airplaneModeReceiver, filter)
+    // Emit initial status
+    checkInitialAirplaneMode()
+  }
+
+  override fun onCancel(arguments: Any?) {
+    context.unregisterReceiver(airplaneModeReceiver)
+    eventSink = null
+  }
+
+  private val airplaneModeReceiver = object : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+      val isAirplaneModeOn = isAirModeOn()
+      eventSink?.success(if (isAirplaneModeOn) "ON" else "OFF")
+}
+  }
+
+  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    methodChannel.setMethodCallHandler(null)
+    eventChannel.setStreamHandler(null)
   }
 }

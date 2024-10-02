@@ -12,6 +12,11 @@ class MockAirplaneModeCheckerPlatform
 
   @override
   Future<String?> checkAirplaneMode() => Future.value('ON');
+
+  @override
+  Stream<String> listenAirplaneMode() {
+    return Stream.value('ON');
+  }
 }
 
 void main() {
@@ -41,5 +46,17 @@ void main() {
 
     expect(await airplaneModeCheckerPlugin.checkAirplaneMode(),
         AirplaneModeStatus.on);
+  });
+
+  test('listenAirplaneMode', () async {
+    AirplaneModeChecker airplaneModeCheckerPlugin =
+        AirplaneModeChecker.instance;
+    MockAirplaneModeCheckerPlatform fakePlatform =
+        MockAirplaneModeCheckerPlatform();
+    AirplaneModeCheckerPlatform.instance = fakePlatform;
+
+    airplaneModeCheckerPlugin.listenAirplaneMode().listen((event) {
+      expect(event, AirplaneModeStatus.on);
+    });
   });
 }

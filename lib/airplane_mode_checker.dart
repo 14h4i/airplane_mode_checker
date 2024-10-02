@@ -14,11 +14,21 @@ class AirplaneModeChecker {
 
   Future<AirplaneModeStatus> checkAirplaneMode() async {
     final mode = await AirplaneModeCheckerPlatform.instance.checkAirplaneMode();
-
     if (mode == 'ON') {
       return AirplaneModeStatus.on;
     }
-
     return AirplaneModeStatus.off;
+  }
+
+  Stream<AirplaneModeStatus> listenAirplaneMode() {
+    return AirplaneModeCheckerPlatform.instance
+        .listenAirplaneMode()
+        .map((event) {
+      if (event == 'ON') {
+        return AirplaneModeStatus.on;
+      } else {
+        return AirplaneModeStatus.off;
+      }
+    });
   }
 }

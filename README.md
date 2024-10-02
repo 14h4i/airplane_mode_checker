@@ -16,7 +16,7 @@ Add the following line to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  airplane_mode_checker: ^3.0.0
+  airplane_mode_checker: ^3.1.0
 ```
 
 Add the following import to your Dart code:
@@ -35,7 +35,28 @@ You will get the return `AirplaneModeStatus`:
 - `AirplaneModeStatus.off`
 
 ```dart
-final status = await AirplaneModeChecker.checkAirplaneMode();
+final status = await AirplaneModeChecker.instance.checkAirplaneMode();
+if (status == AirplaneModeStatus.on) {
+  print('Airplane mode is ON');
+} else {
+  print('Airplane mode is OFF');
+}
+```
+
+### Listen to Airplane Mode Changes
+
+To listen for changes in the status of airplane mode, use `AirplaneModeChecker.instance.listenAirplaneMode()`.
+
+This will return a `Stream<AirplaneModeStatus>`:
+
+```dart
+AirplaneModeChecker.instance.listenAirplaneMode().listen((status) {
+  if (status == AirplaneModeStatus.on) {
+    print('Airplane mode is ON');
+  } else {
+    print('Airplane mode is OFF');
+  }
+});
 ```
 
 ## iOS available
@@ -48,9 +69,7 @@ iOS is available from version 12
 
 ## ScreenShots
 
-> ### Android
->
-> | <img src="https://raw.githubusercontent.com/14h4i/airplane_mode_checker/master/screenshots/on.jpg" width="360" /> | <img src="https://raw.githubusercontent.com/14h4i/airplane_mode_checker/master/screenshots/off.jpg" width="360" /> |
+> | <img src="https://raw.githubusercontent.com/14h4i/airplane_mode_checker/master/screenshots/on.png" width="360" /> | <img src="https://raw.githubusercontent.com/14h4i/airplane_mode_checker/master/screenshots/off.png" width="360" /> |
 > | :---------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: |
 > |                                                AirplaneMode: `ON`                                                 |                                                AirplaneMode: `OFF`                                                 |
 

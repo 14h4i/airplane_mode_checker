@@ -56,3 +56,9 @@
 
 - Migrate to new base
 - Add `namespace` - Support for AGP Version (https://github.com/14h4i/airplane_mode_checker/issues/15)
+
+## 3.1.0
+
+**Updates:**
+
+- New feature `AirplaneModeChecker.instance.listenAirplaneMode()` for request (https://github.com/14h4i/airplane_mode_checker/issues/16)
