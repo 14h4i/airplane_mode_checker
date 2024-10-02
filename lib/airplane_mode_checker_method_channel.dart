@@ -9,6 +9,9 @@ class MethodChannelAirplaneModeChecker extends AirplaneModeCheckerPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('airplane_mode_checker');
 
+  /// The event channel used to receive stream data from the native platform.
+  final eventChannel = const EventChannel('airplane_mode_checker_stream');
+
   @override
   Future<String?> getPlatformVersion() async {
     final version =
@@ -18,8 +21,14 @@ class MethodChannelAirplaneModeChecker extends AirplaneModeCheckerPlatform {
 
   @override
   Future<String?> checkAirplaneMode() async {
-    final version =
-        await methodChannel.invokeMethod<String>('checkAirplaneMode');
-    return version;
+    final mode = await methodChannel.invokeMethod<String>('checkAirplaneMode');
+    return mode;
+  }
+
+  @override
+  Stream<String> listenAirplaneMode() {
+    return eventChannel
+        .receiveBroadcastStream()
+        .map((event) => event as String);
   }
 }
