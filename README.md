@@ -45,12 +45,12 @@ if (status == AirplaneModeStatus.on) {
 
 ### Listen to Airplane Mode Changes
 
-To listen for changes in the status of airplane mode, use `AirplaneModeChecker.instance.startStreaming()`.
+To listen for changes in the status of airplane mode, use `AirplaneModeChecker.instance.checkAirplaneMode()`.
 
 This will return a `Stream<AirplaneModeStatus>`:
 
 ```dart
-AirplaneModeChecker.instance.startStreaming().listen((status) {
+AirplaneModeChecker.instance.checkAirplaneMode().listen((status) {
   if (status == AirplaneModeStatus.on) {
     print('Airplane mode is ON');
   } else {
