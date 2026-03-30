@@ -22,6 +22,7 @@ A Flutter plugin allows you to check the status of Airplane Mode on iOS and Andr
 - The plugin uses `CTTelephonyNetworkInfo` which only works with cellular radios
 - WiFi-only iOS devices return `AirplaneModeStatus.off` by default, but callers
   can override this with `defaultValue`
+- Stream updates on iOS are best-effort due to platform limitations
 
 This is a platform limitation by Apple, not a plugin issue. The plugin provides the best detection possible within iOS constraints.
 
@@ -35,7 +36,7 @@ Add the following line to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  airplane_mode_checker: ^3.2.1
+  airplane_mode_checker: ^3.3.0
 ```
 
 Add the following import to your Dart code:
@@ -44,9 +45,13 @@ Add the following import to your Dart code:
 import 'package:airplane_mode_checker/airplane_mode_checker.dart';
 ```
 
+On iOS, this plugin supports both the traditional CocoaPods flow and Flutter's Swift Package Manager integration.
+Both integration methods support iOS 12.0 or higher.
+Using Swift Package Manager integration in the consuming app requires Flutter 3.24 or higher.
+
 ### Check Airplane Mode
 
-In order to check the airplane mode, use `AirplaneModeChecker.checkAirplaneMode()` as below.
+In order to check the airplane mode, use `AirplaneModeChecker.instance.checkAirplaneMode()` as below.
 
 You will get the return `AirplaneModeStatus`:
 
@@ -77,6 +82,9 @@ To listen for changes in the status of airplane mode, use `AirplaneModeChecker.i
 
 This will return a `Stream<AirplaneModeStatus>`:
 
+- Android: emits the initial status and listens for system airplane mode changes
+- iOS: emits best-effort updates due to platform limitations
+
 ```dart
 AirplaneModeChecker.instance.listenAirplaneMode().listen((status) {
   if (status == AirplaneModeStatus.on) {
@@ -104,7 +112,7 @@ AirplaneModeChecker.instance.listenAirplaneMode(
 
 ## iOS available
 
-iOS is available from version 12
+iOS is available from version 12 with CocoaPods and Swift Package Manager.
 
 ```swift
 @available(iOS 12.0, *)

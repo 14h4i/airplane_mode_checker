@@ -20,6 +20,7 @@ class AirplaneModeCheckerPlugin: FlutterPlugin, MethodCallHandler, EventChannel.
   private lateinit var eventChannel: EventChannel
   private lateinit var context: Context
   private var eventSink: EventChannel.EventSink? = null
+  private var receiverRegistered = false
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     methodChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "airplane_mode_checker")
@@ -27,9 +28,6 @@ class AirplaneModeCheckerPlugin: FlutterPlugin, MethodCallHandler, EventChannel.
     eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "airplane_mode_checker_stream")
     eventChannel.setStreamHandler(this)
     context = flutterPluginBinding.applicationContext
-
-    // Check initial airplane mode status
-    checkInitialAirplaneMode()
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -57,14 +55,20 @@ class AirplaneModeCheckerPlugin: FlutterPlugin, MethodCallHandler, EventChannel.
 
   override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
     eventSink = events
-    val filter = IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED)
-    context.registerReceiver(airplaneModeReceiver, filter)
+    if (!receiverRegistered) {
+      val filter = IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+      context.registerReceiver(airplaneModeReceiver, filter)
+      receiverRegistered = true
+    }
     // Emit initial status
     checkInitialAirplaneMode()
   }
 
   override fun onCancel(arguments: Any?) {
-    context.unregisterReceiver(airplaneModeReceiver)
+    if (receiverRegistered) {
+      context.unregisterReceiver(airplaneModeReceiver)
+      receiverRegistered = false
+    }
     eventSink = null
   }
 
@@ -76,6 +80,11 @@ class AirplaneModeCheckerPlugin: FlutterPlugin, MethodCallHandler, EventChannel.
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    if (receiverRegistered) {
+      context.unregisterReceiver(airplaneModeReceiver)
+      receiverRegistered = false
+    }
+    eventSink = null
     methodChannel.setMethodCallHandler(null)
     eventChannel.setStreamHandler(null)
   }
