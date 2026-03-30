@@ -1,3 +1,22 @@
+## 3.3.0
+
+**Updates:**
+
+- **iOS / Swift Package Manager:**
+  - Added Swift Package Manager support for the iOS plugin
+  - Moved iOS sources to the Swift Package Manager layout
+  - Updated minimum iOS version to 13.0
+
+- **Documentation and examples:**
+  - Clarified iOS polling behavior for `listenAirplaneMode()`
+  - Fixed README usage examples to match the actual singleton API
+  - Updated the example README and fixed stale example widget tests
+
+- **Tests and maintenance:**
+  - Added more Dart tests for `OFF`, `null`, and stream mapping cases
+  - Improved Android stream lifecycle cleanup
+  - Removed unused iOS implementation pieces
+
 ## 0.0.1
 
 - Flutter plugin for check airplane mode

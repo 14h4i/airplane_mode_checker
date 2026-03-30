@@ -1,16 +1,19 @@
 # airplane_mode_checker_example
 
-Demonstrates how to use the airplane_mode_checker plugin.
+Example app for the `airplane_mode_checker` plugin.
 
-## Getting Started
+## What it shows
 
-This project is a starting point for a Flutter application.
+- One-time airplane mode checks with `checkAirplaneMode()`
+- Continuous updates with `listenAirplaneMode()`
 
-A few resources to get you started if this is your first Flutter project:
+## Run it
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```sh
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The UI includes:
+
+- A button to query the current airplane mode state
+- A `StreamBuilder` that reflects the latest stream event from the plugin

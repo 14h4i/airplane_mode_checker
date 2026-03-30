@@ -1,13 +1,10 @@
+import CoreTelephony
 import Flutter
 import UIKit
-import CoreTelephony
-import Network
 
 public class AirplaneModeCheckerPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private var eventSink: FlutterEventSink?
   private var timer: Timer?
-  private var pathMonitor: NWPathMonitor?
-  private let monitorQueue = DispatchQueue(label: "com.u14h4i.airplane_mode_checker.monitor")
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let methodChannel = FlutterMethodChannel(name: "airplane_mode_checker", binaryMessenger: registrar.messenger())
@@ -22,68 +19,47 @@ public class AirplaneModeCheckerPlugin: NSObject, FlutterPlugin, FlutterStreamHa
     case "getPlatformVersion":
       result("iOS " + UIDevice.current.systemVersion)
     case "checkAirplaneMode":
-      self.checkAirplaneMode { (msg) in
-        result(msg)
-      }
+      result(isAirplaneModeOn() ? "ON" : "OFF")
     default:
       result(FlutterMethodNotImplemented)
     }
   }
-    
-  func checkAirplaneMode(completion: @escaping (String) -> Void) {
-    let msg = self.isAirplaneModeOn() ? "ON" : "OFF"
-    completion(msg)
-  }
 
   func isAirplaneModeOn() -> Bool {
-    // Check using CTTelephonyNetworkInfo for cellular radio
     let networkInfo = CTTelephonyNetworkInfo()
-    
-    // For devices with cellular capability
+
     if let carriers = networkInfo.serviceSubscriberCellularProviders, !carriers.isEmpty {
-      // If we have carrier info but no radio access technology, airplane mode might be on
       if let radioAccessTechnology = networkInfo.serviceCurrentRadioAccessTechnology {
-        // If the dictionary exists but is empty, airplane mode is likely on
         return radioAccessTechnology.isEmpty
       }
-      // If radioAccessTechnology is nil but we have carriers, airplane mode might be on
       return true
     }
-    
-    // For WiFi-only devices (iPad WiFi, iPod Touch), we can't reliably detect airplane mode
-    // Return false as default for non-cellular devices
+
+    // Airplane Mode cannot be detected reliably on devices without cellular radios.
     return false
   }
 
   public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-    self.eventSink = events
-    self.startMonitoring()
-    
-    // Send initial status
-    let msg = self.isAirplaneModeOn() ? "ON" : "OFF"
-    events(msg)
-    
+    eventSink = events
+    startMonitoring()
+    events(isAirplaneModeOn() ? "ON" : "OFF")
     return nil
   }
 
   public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-    self.stopMonitoring()
-    self.eventSink = nil
+    stopMonitoring()
+    eventSink = nil
     return nil
   }
 
   private func startMonitoring() {
-    // Use timer-based monitoring for airplane mode changes
-    // Network framework could be used for network availability, but airplane mode
-    // specifically requires polling or listening to system notifications
+    timer?.invalidate()
     timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-      guard let self = self, let eventSink = self.eventSink else { return }
-      let msg = self.isAirplaneModeOn() ? "ON" : "OFF"
-      eventSink(msg)
+      guard let self, let eventSink = self.eventSink else { return }
+      eventSink(self.isAirplaneModeOn() ? "ON" : "OFF")
     }
-    
-    // Ensure timer runs even when UI is being interacted with
-    if let timer = timer {
+
+    if let timer {
       RunLoop.current.add(timer, forMode: .common)
     }
   }
@@ -91,10 +67,8 @@ public class AirplaneModeCheckerPlugin: NSObject, FlutterPlugin, FlutterStreamHa
   private func stopMonitoring() {
     timer?.invalidate()
     timer = nil
-    pathMonitor?.cancel()
-    pathMonitor = nil
   }
-  
+
   deinit {
     stopMonitoring()
   }
