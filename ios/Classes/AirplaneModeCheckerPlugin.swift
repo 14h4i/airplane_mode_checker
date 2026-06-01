@@ -7,6 +7,7 @@ public class AirplaneModeCheckerPlugin: NSObject, FlutterPlugin, FlutterStreamHa
   private var eventSink: FlutterEventSink?
   private var timer: Timer?
   private var pathMonitor: NWPathMonitor?
+  private var streamDefaultValue = false
   private let monitorQueue = DispatchQueue(label: "com.u14h4i.airplane_mode_checker.monitor")
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -22,7 +23,8 @@ public class AirplaneModeCheckerPlugin: NSObject, FlutterPlugin, FlutterStreamHa
     case "getPlatformVersion":
       result("iOS " + UIDevice.current.systemVersion)
     case "checkAirplaneMode":
-      self.checkAirplaneMode { (msg) in
+      let defaultValue = self.defaultValue(from: call.arguments)
+      self.checkAirplaneMode(defaultValue: defaultValue) { (msg) in
         result(msg)
       }
     default:
@@ -30,12 +32,12 @@ public class AirplaneModeCheckerPlugin: NSObject, FlutterPlugin, FlutterStreamHa
     }
   }
     
-  func checkAirplaneMode(completion: @escaping (String) -> Void) {
-    let msg = self.isAirplaneModeOn() ? "ON" : "OFF"
+  func checkAirplaneMode(defaultValue: Bool, completion: @escaping (String) -> Void) {
+    let msg = self.isAirplaneModeOn(defaultValue: defaultValue) ? "ON" : "OFF"
     completion(msg)
   }
 
-  func isAirplaneModeOn() -> Bool {
+  func isAirplaneModeOn(defaultValue: Bool) -> Bool {
     // Check using CTTelephonyNetworkInfo for cellular radio
     let networkInfo = CTTelephonyNetworkInfo()
     
@@ -51,16 +53,17 @@ public class AirplaneModeCheckerPlugin: NSObject, FlutterPlugin, FlutterStreamHa
     }
     
     // For WiFi-only devices (iPad WiFi, iPod Touch), we can't reliably detect airplane mode
-    // Return false as default for non-cellular devices
-    return false
+    // Return the caller-provided default for non-cellular devices
+    return defaultValue
   }
 
   public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
     self.eventSink = events
+    self.streamDefaultValue = self.defaultValue(from: arguments)
     self.startMonitoring()
     
     // Send initial status
-    let msg = self.isAirplaneModeOn() ? "ON" : "OFF"
+    let msg = self.isAirplaneModeOn(defaultValue: self.streamDefaultValue) ? "ON" : "OFF"
     events(msg)
     
     return nil
@@ -78,7 +81,7 @@ public class AirplaneModeCheckerPlugin: NSObject, FlutterPlugin, FlutterStreamHa
     // specifically requires polling or listening to system notifications
     timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
       guard let self = self, let eventSink = self.eventSink else { return }
-      let msg = self.isAirplaneModeOn() ? "ON" : "OFF"
+      let msg = self.isAirplaneModeOn(defaultValue: self.streamDefaultValue) ? "ON" : "OFF"
       eventSink(msg)
     }
     
@@ -97,5 +100,16 @@ public class AirplaneModeCheckerPlugin: NSObject, FlutterPlugin, FlutterStreamHa
   
   deinit {
     stopMonitoring()
+  }
+
+  private func defaultValue(from arguments: Any?) -> Bool {
+    guard
+      let arguments = arguments as? [String: Any],
+      let defaultValue = arguments["defaultValue"] as? String
+    else {
+      return false
+    }
+
+    return defaultValue == "ON"
   }
 }

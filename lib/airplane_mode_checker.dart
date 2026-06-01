@@ -12,23 +12,30 @@ class AirplaneModeChecker {
     return AirplaneModeCheckerPlatform.instance.getPlatformVersion();
   }
 
-  Future<AirplaneModeStatus> checkAirplaneMode() async {
-    final mode = await AirplaneModeCheckerPlatform.instance.checkAirplaneMode();
-    if (mode == 'ON') {
-      return AirplaneModeStatus.on;
-    }
-    return AirplaneModeStatus.off;
+  Future<AirplaneModeStatus> checkAirplaneMode({
+    AirplaneModeStatus defaultValue = AirplaneModeStatus.off,
+  }) async {
+    final mode = await AirplaneModeCheckerPlatform.instance.checkAirplaneMode(
+      defaultValue: _stringFromAirplaneModeStatus(defaultValue),
+    );
+    return _airplaneModeStatusFromString(mode);
   }
 
-  Stream<AirplaneModeStatus> listenAirplaneMode() {
+  Stream<AirplaneModeStatus> listenAirplaneMode({
+    AirplaneModeStatus defaultValue = AirplaneModeStatus.off,
+  }) {
     return AirplaneModeCheckerPlatform.instance
-        .listenAirplaneMode()
-        .map((event) {
-      if (event == 'ON') {
-        return AirplaneModeStatus.on;
-      } else {
-        return AirplaneModeStatus.off;
-      }
-    });
+        .listenAirplaneMode(
+          defaultValue: _stringFromAirplaneModeStatus(defaultValue),
+        )
+        .map(_airplaneModeStatusFromString);
+  }
+
+  String _stringFromAirplaneModeStatus(AirplaneModeStatus status) {
+    return status == AirplaneModeStatus.on ? 'ON' : 'OFF';
+  }
+
+  AirplaneModeStatus _airplaneModeStatusFromString(String? status) {
+    return status == 'ON' ? AirplaneModeStatus.on : AirplaneModeStatus.off;
   }
 }

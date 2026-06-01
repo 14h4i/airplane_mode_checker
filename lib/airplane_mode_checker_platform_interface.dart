@@ -28,11 +28,11 @@ abstract class AirplaneModeCheckerPlatform extends PlatformInterface {
     throw UnimplementedError('getPlatformVersion() has not been implemented.');
   }
 
-  Future<String?> checkAirplaneMode() {
+  Future<String?> checkAirplaneMode({String defaultValue = 'OFF'}) {
     throw UnimplementedError('checkAirplaneMode() has not been implemented.');
   }
 
-  Stream<String> listenAirplaneMode() {
+  Stream<String> listenAirplaneMode({String defaultValue = 'OFF'}) {
     throw UnimplementedError('listenAirplaneMode() has not been implemented.');
   }
 }
