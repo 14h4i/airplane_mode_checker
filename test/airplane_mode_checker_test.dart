@@ -7,14 +7,21 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockAirplaneModeCheckerPlatform
     with MockPlatformInterfaceMixin
     implements AirplaneModeCheckerPlatform {
+  String? checkDefaultValue;
+  String? listenDefaultValue;
+
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<String?> checkAirplaneMode() => Future.value('ON');
+  Future<String?> checkAirplaneMode({String defaultValue = 'OFF'}) {
+    checkDefaultValue = defaultValue;
+    return Future.value('ON');
+  }
 
   @override
-  Stream<String> listenAirplaneMode() {
+  Stream<String> listenAirplaneMode({String defaultValue = 'OFF'}) {
+    listenDefaultValue = defaultValue;
     return Stream.value('ON');
   }
 }
@@ -44,8 +51,26 @@ void main() {
         MockAirplaneModeCheckerPlatform();
     AirplaneModeCheckerPlatform.instance = fakePlatform;
 
-    expect(await airplaneModeCheckerPlugin.checkAirplaneMode(),
-        AirplaneModeStatus.on);
+    expect(
+      await airplaneModeCheckerPlugin.checkAirplaneMode(),
+      AirplaneModeStatus.on,
+    );
+  });
+
+  test('checkAirplaneMode forwards defaultValue', () async {
+    AirplaneModeChecker airplaneModeCheckerPlugin =
+        AirplaneModeChecker.instance;
+    MockAirplaneModeCheckerPlatform fakePlatform =
+        MockAirplaneModeCheckerPlatform();
+    AirplaneModeCheckerPlatform.instance = fakePlatform;
+
+    expect(
+      await airplaneModeCheckerPlugin.checkAirplaneMode(
+        defaultValue: AirplaneModeStatus.on,
+      ),
+      AirplaneModeStatus.on,
+    );
+    expect(fakePlatform.checkDefaultValue, 'ON');
   });
 
   test('listenAirplaneMode', () async {
@@ -58,5 +83,21 @@ void main() {
     airplaneModeCheckerPlugin.listenAirplaneMode().listen((event) {
       expect(event, AirplaneModeStatus.on);
     });
+  });
+
+  test('listenAirplaneMode forwards defaultValue', () async {
+    AirplaneModeChecker airplaneModeCheckerPlugin =
+        AirplaneModeChecker.instance;
+    MockAirplaneModeCheckerPlatform fakePlatform =
+        MockAirplaneModeCheckerPlatform();
+    AirplaneModeCheckerPlatform.instance = fakePlatform;
+
+    await expectLater(
+      airplaneModeCheckerPlugin.listenAirplaneMode(
+        defaultValue: AirplaneModeStatus.on,
+      ),
+      emits(AirplaneModeStatus.on),
+    );
+    expect(fakePlatform.listenDefaultValue, 'ON');
   });
 }

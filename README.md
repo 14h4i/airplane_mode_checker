@@ -20,6 +20,8 @@ A Flutter plugin allows you to check the status of Airplane Mode on iOS and Andr
 - ✅ Works on **cellular devices** (iPhone, iPad with cellular)
 - ❌ **Limited accuracy** on WiFi-only devices (iPad WiFi, iPod Touch)
 - The plugin uses `CTTelephonyNetworkInfo` which only works with cellular radios
+- WiFi-only iOS devices return `AirplaneModeStatus.off` by default, but callers
+  can override this with `defaultValue`
 
 This is a platform limitation by Apple, not a plugin issue. The plugin provides the best detection possible within iOS constraints.
 
@@ -60,6 +62,15 @@ if (status == AirplaneModeStatus.on) {
 }
 ```
 
+On WiFi-only iOS devices, pass `defaultValue` to control the fallback value used
+when iOS cannot detect airplane mode through cellular APIs:
+
+```dart
+final status = await AirplaneModeChecker.instance.checkAirplaneMode(
+  defaultValue: AirplaneModeStatus.on,
+);
+```
+
 ### Listen to Airplane Mode Changes
 
 To listen for changes in the status of airplane mode, use `AirplaneModeChecker.instance.listenAirplaneMode()`.
@@ -74,6 +85,14 @@ AirplaneModeChecker.instance.listenAirplaneMode().listen((status) {
     print('Airplane mode is OFF');
   }
 });
+```
+
+The stream API accepts the same iOS fallback:
+
+```dart
+AirplaneModeChecker.instance.listenAirplaneMode(
+  defaultValue: AirplaneModeStatus.on,
+);
 ```
 
 ## Requirements

@@ -14,21 +14,25 @@ class MethodChannelAirplaneModeChecker extends AirplaneModeCheckerPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version = await methodChannel.invokeMethod<String>(
+      'getPlatformVersion',
+    );
     return version;
   }
 
   @override
-  Future<String?> checkAirplaneMode() async {
-    final mode = await methodChannel.invokeMethod<String>('checkAirplaneMode');
+  Future<String?> checkAirplaneMode({String defaultValue = 'OFF'}) async {
+    final mode = await methodChannel.invokeMethod<String>(
+      'checkAirplaneMode',
+      <String, String>{'defaultValue': defaultValue},
+    );
     return mode;
   }
 
   @override
-  Stream<String> listenAirplaneMode() {
+  Stream<String> listenAirplaneMode({String defaultValue = 'OFF'}) {
     return eventChannel
-        .receiveBroadcastStream()
+        .receiveBroadcastStream(<String, String>{'defaultValue': defaultValue})
         .map((event) => event as String);
   }
 }
