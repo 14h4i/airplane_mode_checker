@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'airplane_mode_checker'
-  s.version          = '3.2.0'
+  s.version          = '3.2.1'
   s.summary          = 'Flutter plugin to check Airplane Mode status on iOS and Android.'
   s.description      = <<-DESC
 A Flutter plugin that allows you to check the status of Airplane Mode on iOS and Android mobile devices.

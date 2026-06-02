@@ -1,10 +1,3 @@
-## Unreleased
-
-**Updates:**
-
-- Add optional `defaultValue` to `checkAirplaneMode` and `listenAirplaneMode`
-  for WiFi-only iOS devices.
-
 ## 0.0.1
 
 - Flutter plugin for check airplane mode
@@ -93,3 +86,10 @@
   - Added package topics for better discoverability on pub.dev
   - Improved code quality and documentation
   - Updated podspec with proper metadata
+
+## 3.2.1
+
+**Updates:**
+
+- Add optional `defaultValue` to `checkAirplaneMode` and `listenAirplaneMode`
+  for WiFi-only iOS devices.
