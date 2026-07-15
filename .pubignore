@@ -1,0 +1,17 @@
+# IDE metadata
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Dart and Flutter generated files
+/pubspec.lock
+**/.dart_tool/
+**/build/
+**/coverage/
+.flutter-plugins-dependencies
+
+# Generated Apple platform files
+**/Flutter/ephemeral/
+**/Pods/
+**/xcuserdata/
