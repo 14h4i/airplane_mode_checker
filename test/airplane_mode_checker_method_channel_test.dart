@@ -15,9 +15,19 @@ void main() {
 
   setUp(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-          return '42';
-        });
+        .setMockMethodCallHandler(
+      channel,
+      (MethodCall methodCall) async {
+        switch (methodCall.method) {
+          case 'getPlatformVersion':
+            return '42';
+          case 'checkAirplaneMode':
+            return 'OFF';
+          default:
+            return null;
+        }
+      },
+    );
   });
 
   tearDown(() {
@@ -29,6 +39,10 @@ void main() {
 
   test('getPlatformVersion', () async {
     expect(await platform.getPlatformVersion(), '42');
+  });
+
+  test('checkAirplaneMode', () async {
+    expect(await platform.checkAirplaneMode(), 'OFF');
   });
 
   test('checkAirplaneMode forwards defaultValue', () async {
